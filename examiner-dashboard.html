@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examiner Dashboard - Online Examination System</title>
+    <link rel="stylesheet" href="style2.css">
+    <style>
+        /* Additional styles for examiner dashboard */
+        .dashboard {
+            padding: 20px 0;
+            min-height: calc(100vh - 200px);
+        }
+
+        .dashboard-header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-header h2 {
+            color: #1a2a6c;
+            margin-bottom: 8px;
+            font-size: 1.6rem;
+        }
+
+        .dashboard-header p {
+            color: #666;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .dashboard-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: transform 0.3s;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .dashboard-card h3 {
+            color: #555;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+
+        .dashboard-card .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1a2a6c;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-card p {
+            color: #777;
+            font-size: 0.8rem;
+            margin: 0;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+            overflow: hidden;
+            max-width: 100%;
+        }
+
+        .table-container h3 {
+            padding: 15px 20px;
+            color: #1a2a6c;
+            border-bottom: 1px solid #eee;
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            word-wrap: break-word;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.85rem;
+        }
+
+        td {
+            font-size: 0.8rem;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .access-denied {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin: 40px auto;
+            max-width: 500px;
+        }
+
+        .access-denied h2 {
+            color: #e74c3c;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .access-denied p {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-draft {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .status-published {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #1a2a6c;
+            border: 2px solid #1a2a6c;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            margin: 2px;
+            border-radius: 4px;
+        }
+
+        .btn-outline:hover {
+            background: #1a2a6c;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            margin: 2px;
+            border-radius: 4px;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+            border: none;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            margin: 2px;
+            border-radius: 4px;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .confidential-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 15px 0;
+            font-size: 0.85rem;
+            color: #856404;
+            text-align: center;
+        }
+
+        .security-alert {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 15px 0;
+            color: #721c24;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        /* Modal improvements */
+        .exam-modal {
+            max-width: 95%;
+            width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .question-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #1a2a6c;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .option-item input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .student-performance {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 15px;
+        }
+
+        .performance-chart {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .performance-item {
+            text-align: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .performance-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #1a2a6c;
+        }
+
+        /* Form improvements */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #1a2a6c;
+        }
+
+        /* Responsive improvements */
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-container {
+                overflow-x: auto;
+            }
+            
+            table {
+                min-width: 600px;
+            }
+            
+            .exam-modal {
+                width: 95%;
+                margin: 10px;
+            }
+            
+            .performance-chart {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard {
+                padding: 15px 0;
+            }
+            
+            .dashboard-header h2 {
+                font-size: 1.3rem;
+            }
+            
+            .dashboard-card {
+                padding: 15px;
+            }
+            
+            .performance-chart {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-outline, .btn-success, .btn-warning {
+                display: block;
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+
+        /* Scrollbar styling for modals */
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* Action buttons container */
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        /* Ensure tables don't overflow */
+        .table-wrapper {
+            overflow-x: auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div style="width: 50px; height: 50px; background: white; display: flex; align-items: center; justify-content: center; border-radius: 5px; font-weight: bold; color: #1a2a6c;">
+                    LUCT
+                </div>
+            </div>
+            <div class="title">
+                <h1>Limkokwing University Of Creative Technology</h1>
+                <p>Examiner Portal - Online Examination System</p>
+            </div>
+            <div class="nav-links">
+                <a href="index1.html">Home</a>
+                <a href="login.html">Login</a>
+                <a href="student-dashboard.html">Student Portal</a>
+                <a href="examiner-dashboard.html" class="active">Examiner Portal</a>
+                <a href="admin-dashboard.html">Administrator</a>
+            </div>
+            <div class="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Examiner Dashboard -->
+    <section class="dashboard">
+        <div class="container">
+            <!-- Access denied message (hidden by default) -->
+            <div id="accessDenied" class="access-denied" style="display: none;">
+                <h2>🔒 Access Denied - Confidential Information</h2>
+                <p>This portal contains confidential student information and is restricted to authorized examiners only.</p>
+                <p>Unauthorized access attempts are logged and monitored.</p>
+                <button class="btn btn-primary" onclick="redirectToLogin()">Go to Login</button>
+            </div>
+
+            <!-- Security alert for unauthorized users -->
+            <div id="securityAlert" class="security-alert" style="display: none;">
+                <strong>SECURITY ALERT:</strong> Unauthorized access attempt detected. This incident has been logged.
+            </div>
+
+            <!-- Actual dashboard content (hidden by default) -->
+            <div id="dashboardContent" style="display: none;">
+                <div class="confidential-notice">
+                    🔒 <strong>CONFIDENTIAL:</strong> This dashboard contains sensitive student information. 
+                    All data access is monitored and logged for security purposes.
+                </div>
+
+                <div class="dashboard-header">
+                    <div>
+                        <h2>Examiner Dashboard</h2>
+                        <p id="examinerWelcome">Welcome, Examiner</p>
+                        <p id="examinerInfo" style="font-size: 0.9rem; color: #666;"></p>
+                    </div>
+                    <button class="btn btn-secondary" onclick="logout()">Secure Logout</button>
+                </div>
+
+                <div class="dashboard-cards">
+                    <div class="dashboard-card">
+                        <h3>Active Exams</h3>
+                        <div class="number" id="activeExams">0</div>
+                        <p>Exams currently active</p>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Pending Evaluation</h3>
+                        <div class="number" id="pendingEvaluations">0</div>
+                        <p>Submissions to evaluate</p>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Total Students</h3>
+                        <div class="number" id="examinerStudentCount">0</div>
+                        <p>Students in your courses</p>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px;">
+                        <h3>Student List - Confidential</h3>
+                        <button class="btn btn-primary" onclick="showCreateExamModal()">Create New Exam</button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 15%">Student ID</th>
+                                    <th style="width: 20%">Name</th>
+                                    <th style="width: 25%">Email</th>
+                                    <th style="width: 15%">Department</th>
+                                    <th style="width: 10%">Status</th>
+                                    <th style="width: 15%">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="examinerStudentsTable">
+                                <tr>
+                                    <td colspan="6" style="text-align: center;">Loading student data...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="table-container" style="margin-top: 25px;">
+                    <h3 style="padding: 15px 20px 0;">Exam Management</h3>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 25%">Exam Name</th>
+                                    <th style="width: 15%">Subject</th>
+                                    <th style="width: 15%">Date Created</th>
+                                    <th style="width: 10%">Status</th>
+                                    <th style="width: 10%">Participants</th>
+                                    <th style="width: 25%">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="examsManagementTable">
+                                <tr>
+                                    <td colspan="6" style="text-align: center;">Loading exam data...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Create Exam Modal -->
+    <div class="modal" id="createExamModal">
+        <div class="modal-content exam-modal">
+            <div class="modal-header">
+                <h3>Create New Examination</h3>
+                <button class="close-modal" onclick="closeCreateExamModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="createExamAlert"></div>
+                <form id="createExamForm">
+                    <div class="form-group">
+                        <label for="examName">Exam Name</label>
+                        <input type="text" id="examName" placeholder="Enter exam name" required>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label for="examSubject">Subject</label>
+                            <input type="text" id="examSubject" placeholder="Enter subject" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="examDuration">Duration (minutes)</label>
+                            <input type="number" id="examDuration" placeholder="Enter duration" required min="1">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="examInstructions">Instructions</label>
+                        <textarea id="examInstructions" placeholder="Enter exam instructions" rows="3"></textarea>
+                    </div>
+                    
+                    <h4 style="margin: 20px 0 10px 0; color: #1a2a6c;">Exam Questions</h4>
+                    <div id="questionsContainer">
+                        <!-- Questions will be added here dynamically -->
+                    </div>
+                    
+                    <button type="button" class="btn btn-outline" onclick="addQuestion()" style="margin-bottom: 20px;">+ Add Question</button>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeCreateExamModal()">Cancel</button>
+                        <button type="button" class="btn btn-warning" onclick="saveAsDraft()">Save as Draft</button>
+                        <button type="submit" class="btn btn-primary">Publish Exam</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Details Modal -->
+    <div class="modal" id="studentDetailsModal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 id="studentDetailsTitle">Student Academic Information</h3>
+                <button class="close-modal" onclick="closeStudentDetailsModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="studentDetailsContent">
+                    <!-- Student details will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Limkokwing University</h4>
+                    <p>Innovating education through technology and creativity</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index1.html">Home</a></li>
+                        <li><a href="login.html">Login</a></li>
+                       
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <p>Email: support@limkokwing.edu</p>
+                    <p>Phone: +266 456 7890</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Limkokwing University. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Enhanced Secure Examiner Dashboard with Exam Management
+        let currentUser = null;
+        let accessAttempts = 0;
+        let questionCount = 0;
+        let exams = JSON.parse(localStorage.getItem('examinerExams') || '[]');
+
+        // Initialize examiner dashboard
+        function initExaminerDashboard() {
+            console.log('Initializing secure examiner dashboard...');
+            
+            // Check authentication and user type
+            currentUser = checkExaminerAuth();
+            
+            if (!currentUser) {
+                console.log('Access denied - User not authenticated as examiner');
+                showAccessDenied();
+                return;
+            }
+            
+            // User is authenticated as examiner, show dashboard
+            showDashboardContent();
+            
+            // Update welcome message and user info
+            updateExaminerInfo();
+            
+            // Load examiner data
+            loadExaminerData();
+            
+            console.log('Examiner dashboard initialized successfully for:', currentUser.name);
+            
+            // Log successful access
+            logSecurityEvent('ACCESS_GRANTED', `Examiner ${currentUser.name} accessed dashboard`);
+        }
+
+        // Strict authentication check for examiners only
+        function checkExaminerAuth() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            
+            // Check if user is logged in
+            if (!currentUser) {
+                console.log('No user logged in');
+                alert('🔒 Authentication Required: Please login to access examiner portal.');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
+                return null;
+            }
+            
+            // Check if user is actually an examiner
+            if (currentUser.type !== 'examiner') {
+                accessAttempts++;
+                console.log(`Access denied - User is not an examiner: ${currentUser.type} (Attempt: ${accessAttempts})`);
+                
+                // Log unauthorized access attempt
+                logSecurityEvent('UNAUTHORIZED_ACCESS', 
+                    `User ${currentUser.name} (${currentUser.type}) attempted to access examiner portal`);
+                
+                // Show security alert
+                document.getElementById('securityAlert').style.display = 'block';
+                
+                alert('🚫 ACCESS DENIED: Examiner portal contains confidential student information. Authorized personnel only.');
+                
+                setTimeout(() => {
+                    // Redirect to appropriate dashboard based on user type
+                    if (currentUser.type === 'student') {
+                        window.location.href = 'student-dashboard.html';
+                    } else if (currentUser.type === 'admin') {
+                        window.location.href = 'admin-dashboard.html';
+                    } else {
+                        window.location.href = 'login.html';
+                    }
+                }, 3000);
+                return null;
+            }
+            
+            // Additional verification: Check if examiner exists in the system
+            const allUsers = JSON.parse(localStorage.getItem('universityUsers') || '[]');
+            const examinerExists = allUsers.some(user => 
+                user.id === currentUser.id && 
+                user.type === 'examiner' && 
+                user.status === 'active'
+            );
+            
+            if (!examinerExists) {
+                console.log('Access denied - Examiner not found in system or inactive');
+                logSecurityEvent('INVALID_EXAMINER', 
+                    `Examiner ${currentUser.id} not found in system or account inactive`);
+                alert('Examiner account not found or inactive. Please contact administration.');
+                localStorage.removeItem('currentUser');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+                return null;
+            }
+            
+            return currentUser;
+        }
+
+        // Enhanced security logging
+        function logSecurityEvent(action, details) {
+            const securityLogs = JSON.parse(localStorage.getItem('examinerSecurityLogs') || '[]');
+            const logEntry = {
+                userId: currentUser ? currentUser.id : 'unknown',
+                userName: currentUser ? currentUser.name : 'unknown',
+                userType: currentUser ? currentUser.type : 'unknown',
+                action: action,
+                details: details,
+                timestamp: new Date().toISOString(),
+                ip: '127.0.0.1',
+                userAgent: navigator.userAgent
+            };
+            
+            securityLogs.push(logEntry);
+            
+            if (securityLogs.length > 100) {
+                securityLogs.splice(0, securityLogs.length - 100);
+            }
+            
+            localStorage.setItem('examinerSecurityLogs', JSON.stringify(securityLogs));
+            console.log('Security event logged:', action, details);
+        }
+
+        function showAccessDenied() {
+            document.getElementById('accessDenied').style.display = 'block';
+            document.getElementById('dashboardContent').style.display = 'none';
+            document.getElementById('securityAlert').style.display = 'none';
+        }
+
+        function showDashboardContent() {
+            document.getElementById('accessDenied').style.display = 'none';
+            document.getElementById('dashboardContent').style.display = 'block';
+            document.getElementById('securityAlert').style.display = 'none';
+        }
+
+        function updateExaminerInfo() {
+            document.getElementById('examinerWelcome').textContent = `Welcome, ${currentUser.name}`;
+            document.getElementById('examinerInfo').textContent = 
+                `Examiner ID: ${currentUser.id} | Department: ${currentUser.department}`;
+        }
+
+        function loadExaminerData() {
+            loadStudentsData();
+            loadExamsData();
+            updateDashboardStats();
+        }
+
+        function loadStudentsData() {
+            const studentsTable = document.getElementById('examinerStudentsTable');
+            const users = JSON.parse(localStorage.getItem('universityUsers') || '[]');
+            const students = users.filter(u => u.type === 'student');
+            
+            if (students.length === 0) {
+                studentsTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">No students registered in the system</td></tr>';
+                return;
+            }
+            
+            studentsTable.innerHTML = '';
+            students.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.id}</td>
+                    <td>${student.name}</td>
+                    <td>${student.email}</td>
+                    <td>${student.department}</td>
+                    <td><span class="status-badge status-active">Active</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-outline" onclick="viewStudentDetails('${student.id}')">View Academic Info</button>
+                        </div>
+                    </td>
+                `;
+                studentsTable.appendChild(row);
+            });
+            
+            logSecurityEvent('DATA_ACCESS', `Accessed student list with ${students.length} records`);
+        }
+
+        function loadExamsData() {
+            const examsTable = document.getElementById('examsManagementTable');
+            
+            if (exams.length === 0) {
+                examsTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">No exams created yet</td></tr>';
+                return;
+            }
+            
+            examsTable.innerHTML = '';
+            exams.forEach((exam, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${exam.name}</td>
+                    <td>${exam.subject}</td>
+                    <td>${exam.dateCreated}</td>
+                    <td><span class="status-badge status-${exam.status.toLowerCase()}">${exam.status}</span></td>
+                    <td>${exam.participants || 0}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-outline" onclick="manageExam(${index})">Manage</button>
+                            ${exam.status === 'draft' ? `<button class="btn btn-success" onclick="publishExam(${index})">Publish</button>` : ''}
+                            ${exam.status === 'published' ? `<button class="btn btn-warning" onclick="unpublishExam(${index})">Unpublish</button>` : ''}
+                            <button class="btn btn-outline" onclick="deleteExam(${index})">Delete</button>
+                        </div>
+                    </td>
+                `;
+                examsTable.appendChild(row);
+            });
+        }
+
+        function updateDashboardStats() {
+            const users = JSON.parse(localStorage.getItem('universityUsers') || '[]');
+            const students = users.filter(u => u.type === 'student');
+            const activeExams = exams.filter(exam => exam.status === 'published').length;
+            const pendingEvals = exams.reduce((total, exam) => total + (exam.pendingEvaluations || 0), 0);
+            
+            document.getElementById('examinerStudentCount').textContent = students.length;
+            document.getElementById('activeExams').textContent = activeExams;
+            document.getElementById('pendingEvaluations').textContent = pendingEvals;
+        }
+
+        // Exam Creation Functions
+        function showCreateExamModal() {
+            document.getElementById('createExamModal').style.display = 'flex';
+            document.getElementById('createExamAlert').innerHTML = '';
+            document.getElementById('createExamForm').reset();
+            questionCount = 0;
+            document.getElementById('questionsContainer').innerHTML = '';
+            addQuestion(); // Add first question by default
+            
+            logSecurityEvent('EXAM_CREATION_INITIATED', 'Started creating new exam');
+        }
+
+        function closeCreateExamModal() {
+            document.getElementById('createExamModal').style.display = 'none';
+        }
+
+        function addQuestion() {
+            questionCount++;
+            const questionsContainer = document.getElementById('questionsContainer');
+            questionsContainer.innerHTML += createQuestionHTML(questionCount);
+        }
+
+        function createQuestionHTML(qNumber) {
+            return `
+                <div class="question-item" id="question${qNumber}">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <label style="font-weight: bold; color: #1a2a6c;">Question ${qNumber}</label>
+                        ${qNumber > 1 ? `<button type="button" class="btn btn-outline" onclick="removeQuestion(${qNumber})" style="padding: 4px 8px; font-size: 0.8rem;">Remove</button>` : ''}
+                    </div>
+                    <div class="form-group">
+                        <input type="text" placeholder="Enter question text" class="question-text" required>
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 0.85rem;">Options (Select the correct answer)</label>
+                        <div class="option-item">
+                            <input type="radio" name="q${qNumber}_correct" value="0" required>
+                            <input type="text" placeholder="Option A" class="option-text" required style="flex: 1;">
+                        </div>
+                        <div class="option-item">
+                            <input type="radio" name="q${qNumber}_correct" value="1">
+                            <input type="text" placeholder="Option B" class="option-text" required style="flex: 1;">
+                        </div>
+                        <div class="option-item">
+                            <input type="radio" name="q${qNumber}_correct" value="2">
+                            <input type="text" placeholder="Option C" class="option-text" required style="flex: 1;">
+                        </div>
+                        <div class="option-item">
+                            <input type="radio" name="q${qNumber}_correct" value="3">
+                            <input type="text" placeholder="Option D" class="option-text" required style="flex: 1;">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function removeQuestion(qNumber) {
+            if (questionCount > 1) {
+                document.getElementById(`question${qNumber}`).remove();
+                questionCount--;
+                // Renumber remaining questions
+                const questions = document.querySelectorAll('.question-item');
+                questions.forEach((question, index) => {
+                    const newNumber = index + 1;
+                    const label = question.querySelector('label');
+                    const radioInputs = question.querySelectorAll('input[type="radio"]');
+                    
+                    label.textContent = `Question ${newNumber}`;
+                    question.id = `question${newNumber}`;
+                    
+                    // Update radio button names
+                    radioInputs.forEach(input => {
+                        input.name = `q${newNumber}_correct`;
+                    });
+                });
+            }
+        }
+
+        function saveAsDraft() {
+            const examData = collectExamData();
+            if (!examData) return;
+            
+            examData.status = 'draft';
+            exams.push(examData);
+            localStorage.setItem('examinerExams', JSON.stringify(exams));
+            
+            showAlert(document.getElementById('createExamAlert'), 'Exam saved as draft successfully!', 'success');
+            logSecurityEvent('EXAM_SAVED_DRAFT', `Saved exam "${examData.name}" as draft`);
+            
+            setTimeout(() => {
+                closeCreateExamModal();
+                loadExamsData();
+                updateDashboardStats();
+            }, 1500);
+        }
+
+        function collectExamData() {
+            const examName = document.getElementById('examName').value;
+            const examSubject = document.getElementById('examSubject').value;
+            const examDuration = document.getElementById('examDuration').value;
+            const examInstructions = document.getElementById('examInstructions').value;
+            
+            if (!examName || !examSubject || !examDuration) {
+                showAlert(document.getElementById('createExamAlert'), 'Please fill in all required fields!', 'error');
+                return null;
+            }
+            
+            // Collect questions
+            const questions = [];
+            for (let i = 1; i <= questionCount; i++) {
+                const questionElement = document.getElementById(`question${i}`);
+                if (!questionElement) continue;
+                
+                const questionText = questionElement.querySelector('.question-text').value;
+                const options = Array.from(questionElement.querySelectorAll('.option-text')).map(input => input.value);
+                const correctAnswer = questionElement.querySelector('input[type="radio"]:checked');
+                
+                if (!questionText || options.some(opt => !opt) || !correctAnswer) {
+                    showAlert(document.getElementById('createExamAlert'), `Please complete all fields for Question ${i}!`, 'error');
+                    return null;
+                }
+                
+                questions.push({
+                    text: questionText,
+                    options: options,
+                    correctAnswer: parseInt(correctAnswer.value)
+                });
+            }
+            
+            if (questions.length === 0) {
+                showAlert(document.getElementById('createExamAlert'), 'Please add at least one question!', 'error');
+                return null;
+            }
+            
+            return {
+                id: 'exam_' + Date.now(),
+                name: examName,
+                subject: examSubject,
+                duration: parseInt(examDuration),
+                instructions: examInstructions,
+                questions: questions,
+                dateCreated: new Date().toISOString().split('T')[0],
+                createdBy: currentUser.id,
+                participants: 0,
+                pendingEvaluations: 0
+            };
+        }
+
+        // Form submission for publishing exam
+        document.getElementById('createExamForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            publishExamDirect();
+        });
+
+        function publishExamDirect() {
+            const examData = collectExamData();
+            if (!examData) return;
+            
+            examData.status = 'published';
+            exams.push(examData);
+            localStorage.setItem('examinerExams', JSON.stringify(exams));
+            
+            showAlert(document.getElementById('createExamAlert'), 'Exam published successfully! Students can now access it.', 'success');
+            logSecurityEvent('EXAM_PUBLISHED', `Published exam "${examData.name}"`);
+            
+            setTimeout(() => {
+                closeCreateExamModal();
+                loadExamsData();
+                updateDashboardStats();
+            }, 1500);
+        }
+
+        // Exam Management Functions
+        function manageExam(examIndex) {
+            const exam = exams[examIndex];
+            alert(`Managing Exam: ${exam.name}\n\nStatus: ${exam.status}\nQuestions: ${exam.questions.length}\nDuration: ${exam.duration} minutes\n\nManagement Options:\n- View submissions\n- Grade answers\n- Modify questions\n- Adjust settings`);
+            
+            logSecurityEvent('EXAM_MANAGED', `Accessed management for exam: ${exam.name}`);
+        }
+
+        function publishExam(examIndex) {
+            if (confirm(`Publish "${exams[examIndex].name}"? Students will be able to access this exam.`)) {
+                exams[examIndex].status = 'published';
+                localStorage.setItem('examinerExams', JSON.stringify(exams));
+                loadExamsData();
+                updateDashboardStats();
+                
+                logSecurityEvent('EXAM_PUBLISHED', `Published exam: ${exams[examIndex].name}`);
+                alert('Exam published successfully!');
+            }
+        }
+
+        function unpublishExam(examIndex) {
+            if (confirm(`Unpublish "${exams[examIndex].name}"? Students will no longer be able to access this exam.`)) {
+                exams[examIndex].status = 'draft';
+                localStorage.setItem('examinerExams', JSON.stringify(exams));
+                loadExamsData();
+                updateDashboardStats();
+                
+                logSecurityEvent('EXAM_UNPUBLISHED', `Unpublished exam: ${exams[examIndex].name}`);
+                alert('Exam unpublished successfully!');
+            }
+        }
+
+        function deleteExam(examIndex) {
+            if (confirm(`Are you sure you want to delete "${exams[examIndex].name}"? This action cannot be undone.`)) {
+                logSecurityEvent('EXAM_DELETED', `Deleted exam: ${exams[examIndex].name}`);
+                exams.splice(examIndex, 1);
+                localStorage.setItem('examinerExams', JSON.stringify(exams));
+                loadExamsData();
+                updateDashboardStats();
+                alert('Exam deleted successfully!');
+            }
+        }
+
+        // Student Academic Information
+        function viewStudentDetails(studentId) {
+            const users = JSON.parse(localStorage.getItem('universityUsers') || '[]');
+            const student = users.find(u => u.id === studentId && u.type === 'student');
+            
+            if (!student) {
+                alert('Student not found!');
+                return;
+            }
+            
+            // Sample academic data
+            const academicData = {
+                gpa: '3.45',
+                completedExams: 8,
+                averageScore: '78%',
+                attendance: '92%',
+                recentGrades: [
+                    { subject: 'Mathematics', grade: 'A', score: '88%' },
+                    { subject: 'Computer Science', grade: 'B+', score: '85%' },
+                    { subject: 'Physics', grade: 'B', score: '82%' },
+                    { subject: 'Chemistry', grade: 'A-', score: '86%' }
+                ]
+            };
+            
+            document.getElementById('studentDetailsTitle').textContent = `Academic Information - ${student.name}`;
+            document.getElementById('studentDetailsContent').innerHTML = `
+                <div class="student-performance">
+                    <h4 style="color: #1a2a6c; margin-bottom: 15px;">Student Performance Overview</h4>
+                    <p><strong>Student ID:</strong> ${student.id}</p>
+                    <p><strong>Department:</strong> ${student.department}</p>
+                    <p><strong>Email:</strong> ${student.email}</p>
+                    
+                    <div class="performance-chart">
+                        <div class="performance-item">
+                            <div class="performance-value">${academicData.gpa}</div>
+                            <div>GPA</div>
+                        </div>
+                        <div class="performance-item">
+                            <div class="performance-value">${academicData.averageScore}</div>
+                            <div>Average Score</div>
+                        </div>
+                        <div class="performance-item">
+                            <div class="performance-value">${academicData.completedExams}</div>
+                            <div>Exams Taken</div>
+                        </div>
+                        <div class="performance-item">
+                            <div class="performance-value">${academicData.attendance}</div>
+                            <div>Attendance</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <h4 style="padding: 15px; margin: 0;">Recent Exam Results</h4>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 40%">Subject</th>
+                                    <th style="width: 30%">Grade</th>
+                                    <th style="width: 30%">Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${academicData.recentGrades.map(grade => `
+                                    <tr>
+                                        <td>${grade.subject}</td>
+                                        <td><strong>${grade.grade}</strong></td>
+                                        <td>${grade.score}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="generateReport('${studentId}')">Generate Academic Report</button>
+                    <button class="btn btn-outline" onclick="closeStudentDetailsModal()" style="margin-left: 10px;">Close</button>
+                </div>
+            `;
+            
+            document.getElementById('studentDetailsModal').style.display = 'flex';
+            logSecurityEvent('STUDENT_ACADEMIC_ACCESS', `Viewed academic information for student ${studentId}`);
+        }
+
+        function closeStudentDetailsModal() {
+            document.getElementById('studentDetailsModal').style.display = 'none';
+        }
+
+        function generateReport(studentId) {
+            alert(`Generating comprehensive academic report for student ${studentId}...\n\nReport would include:\n- Detailed performance analysis\n- Progress trends\n- Comparative statistics\n- Recommendations`);
+            
+            logSecurityEvent('REPORT_GENERATED', `Generated academic report for student ${studentId}`);
+        }
+
+        // Utility Functions
+        function showAlert(container, message, type) {
+            if (container) {
+                container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            }
+        }
+
+        function redirectToLogin() {
+            window.location.href = 'login.html';
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout? All confidential data will be secured.')) {
+                logSecurityEvent('LOGOUT', `Examiner ${currentUser.name} logged out securely`);
+                localStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Initialize examiner dashboard when page loads
+        document.addEventListener('DOMContentLoaded', initExaminerDashboard);
+    </script>
+</body>
+</html>

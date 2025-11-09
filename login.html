@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Online Examination System</title>
+    <link rel="stylesheet" href="style2.css">
+    <style>
+        .access-denied {
+            border: 2px solid #e74c3c;
+            background: #f8d7da;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .security-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #856404;
+        }
+        
+        .attempts-warning {
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div style="width: 50px; height: 50px; background: white; display: flex; align-items: center; justify-content: center; border-radius: 5px; font-weight: bold; color: #1a2a6c;">
+                    LUCT
+                </div>
+            </div>
+            <div class="title">
+                <h1>Limkokwing University Of Creative Technology</h1>
+                <p>Online Academic Examination Management System</p>
+            </div>
+            <div class="nav-links">
+                <a href="index1.html">Home</a>
+                <a href="login.html" class="active">Login</a>
+                <a href="student-dashboard.html">Student Portal</a>
+                <a href="examiner-dashboard.html">Examiner Portal</a>
+                <a href="admin-dashboard.html">Administrator</a>
+            </div>
+            <div class="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Section -->
+    <section class="login-container">
+        <div class="login-form">
+            <h2>Login to Your Account</h2>
+            <div class="security-notice">
+                🔒 Access restricted to registered users only. Unauthorized access attempts will be logged.
+            </div>
+            <div id="loginAlert"></div>
+            
+            <div class="user-type-selector">
+                <div class="user-type-card selected" onclick="selectUserType('student')">
+                    <div class="user-icon">👨‍🎓</div>
+                    <div>Student</div>
+                </div>
+                <div class="user-type-card" onclick="selectUserType('examiner')">
+                    <div class="user-icon">👨‍🏫</div>
+                    <div>Examiner</div>
+                </div>
+                <div class="user-type-card" onclick="selectUserType('admin')">
+                    <div class="user-icon">👨‍💼</div>
+                    <div>Administrator</div>
+                </div>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username/ID</label>
+                    <input type="text" id="username" placeholder="Enter your username or ID" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                    <div id="attemptsWarning" class="attempts-warning" style="display: none;"></div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;" id="loginBtn">Login</button>
+            </form>
+            
+            <div style="margin-top: 20px; text-align: center;">
+                <p><a href="#" style="color: #3498db;">Forgot Password?</a></p>
+                <span class="toggle-link" onclick="showRegister()">Don't have an account? Register here</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Account</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="registerAlert"></div>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="regUserType">Account Type</label>
+                        <select id="regUserType" required>
+                            <option value="">Select Account Type</option>
+                            <option value="student">Student</option>
+                            <option value="examiner">Examiner</option>
+                            <option value="admin">Administrator</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="regFullName">Full Name</label>
+                        <input type="text" id="regFullName" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regEmail">Email Address</label>
+                        <input type="email" id="regEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regUserId">User ID</label>
+                        <input type="text" id="regUserId" placeholder="Enter your user ID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regDepartment">Department</label>
+                        <select id="regDepartment" required>
+                            <option value="">Select Department</option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Software Engineering">Software Engineering</option>
+                            <option value="Information Technology">Information Technology</option>
+                            <option value="Web Design">Web Design</option>
+                            <option value="Principles of Design">Principles of Design</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="Administration">Administration</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPassword">Password</label>
+                        <input type="password" id="regPassword" placeholder="Create a password" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="regConfirmPassword">Confirm Password</label>
+                        <input type="password" id="regConfirmPassword" placeholder="Confirm your password" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeRegisterModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create Account</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Limkokwing University</h4>
+                    <p>Innovating education through technology and creativity</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index1.html">Home</a></li>
+                        <li><a href="login.html">Login</a></li>
+                       
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <p>Email: support@limkokwing.edu</p>
+                    <p>Phone: +266 456 7890</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Limkokwing University. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Enhanced Security Login System
+        let selectedUserType = 'student';
+        let loginAttempts = 0;
+        const MAX_ATTEMPTS = 5;
+        let lockoutTime = 0;
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Secure login system initialized');
+            setupEventListeners();
+            checkLockoutStatus();
+            
+            // Set default user type as selected
+            document.querySelector('.user-type-card').classList.add('selected');
+        });
+
+        function setupEventListeners() {
+            // Login form
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    handleLogin();
+                });
+            }
+
+            // Register form
+            const registerForm = document.getElementById('registerForm');
+            if (registerForm) {
+                registerForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    handleRegister();
+                });
+            }
+
+            // Close modal buttons
+            document.querySelector('.close-modal').addEventListener('click', closeRegisterModal);
+            
+            // Close modal when clicking outside
+            document.getElementById('registerModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeRegisterModal();
+                }
+            });
+
+            // Real-time validation
+            document.getElementById('username').addEventListener('input', clearErrorStyles);
+            document.getElementById('password').addEventListener('input', clearErrorStyles);
+        }
+
+        function clearErrorStyles() {
+            document.getElementById('username').classList.remove('access-denied');
+            document.getElementById('password').classList.remove('access-denied');
+        }
+
+        function checkLockoutStatus() {
+            const now = Date.now();
+            const lastLockout = localStorage.getItem('loginLockout');
+            
+            if (lastLockout && now - lastLockout < 300000) { // 5 minutes lockout
+                const remainingTime = Math.ceil((300000 - (now - lastLockout)) / 1000 / 60);
+                disableLogin(`System temporarily locked. Try again in ${remainingTime} minutes.`);
+            } else {
+                localStorage.removeItem('loginLockout');
+                loginAttempts = 0;
+            }
+        }
+
+        function disableLogin(message) {
+            document.getElementById('loginBtn').disabled = true;
+            document.getElementById('loginBtn').textContent = 'Login Disabled';
+            document.getElementById('loginBtn').style.background = '#6c757d';
+            showAlert(document.getElementById('loginAlert'), message, 'error');
+        }
+
+        function enableLogin() {
+            document.getElementById('loginBtn').disabled = false;
+            document.getElementById('loginBtn').textContent = 'Login';
+            document.getElementById('loginBtn').style.background = '';
+        }
+
+        function selectUserType(type) {
+            selectedUserType = type;
+            
+            // Update UI
+            document.querySelectorAll('.user-type-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            console.log('Selected user type:', type);
+        }
+
+        function showRegister() {
+            const registerModal = document.getElementById('registerModal');
+            if (registerModal) {
+                registerModal.style.display = 'flex';
+                document.getElementById('registerAlert').innerHTML = '';
+                document.getElementById('registerForm').reset();
+            }
+        }
+
+        function closeRegisterModal() {
+            const registerModal = document.getElementById('registerModal');
+            if (registerModal) {
+                registerModal.style.display = 'none';
+            }
+        }
+
+        function handleLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginAlert = document.getElementById('loginAlert');
+            const attemptsWarning = document.getElementById('attemptsWarning');
+
+            // Check if system is locked
+            if (document.getElementById('loginBtn').disabled) {
+                return;
+            }
+
+            if (!username || !password) {
+                showAlert(loginAlert, 'Please fill in all fields!', 'error');
+                return;
+            }
+
+            // Get users from localStorage
+            const users = JSON.parse(localStorage.getItem('universityUsers') || '[]');
+            const user = users.find(u => 
+                (u.id === username || u.email === username) && 
+                u.password === password && 
+                u.type === selectedUserType
+            );
+
+            if (user) {
+                // Reset attempts on successful login
+                loginAttempts = 0;
+                attemptsWarning.style.display = 'none';
+                
+                // Save current user session
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                
+                // Log successful login
+                logAccessAttempt(username, selectedUserType, true);
+                
+                showAlert(loginAlert, `✅ Login successful! Welcome ${user.name}`, 'success');
+                
+                // Redirect after delay
+                setTimeout(() => {
+                    redirectToDashboard(user.type);
+                }, 1500);
+            } else {
+                loginAttempts++;
+                
+                // Log failed attempt
+                logAccessAttempt(username, selectedUserType, false);
+                
+                // Show visual feedback
+                document.getElementById('username').classList.add('access-denied');
+                document.getElementById('password').classList.add('access-denied');
+                
+                if (loginAttempts >= MAX_ATTEMPTS) {
+                    // Lock the system for 5 minutes
+                    lockoutTime = Date.now();
+                    localStorage.setItem('loginLockout', lockoutTime);
+                    disableLogin('🚫 Too many failed attempts. System locked for 5 minutes.');
+                } else {
+                    const remainingAttempts = MAX_ATTEMPTS - loginAttempts;
+                    attemptsWarning.textContent = `${remainingAttempts} attempt(s) remaining`;
+                    attemptsWarning.style.display = 'block';
+                    
+                    showAlert(loginAlert, 
+                        `❌ Access Denied! Invalid credentials or unregistered user. (Attempt ${loginAttempts}/${MAX_ATTEMPTS})`, 
+                        'error'
+                    );
+                }
+            }
+        }
+
+        function logAccessAttempt(username, userType, success) {
+            const accessLogs = JSON.parse(localStorage.getItem('accessLogs') || '[]');
+            const logEntry = {
+                username: username,
+                userType: userType,
+                success: success,
+                timestamp: new Date().toISOString(),
+                ip: '127.0.0.1' // In real system, this would be the actual IP
+            };
+            
+            accessLogs.push(logEntry);
+            
+            // Keep only last 100 logs
+            if (accessLogs.length > 100) {
+                accessLogs.splice(0, accessLogs.length - 100);
+            }
+            
+            localStorage.setItem('accessLogs', JSON.stringify(accessLogs));
+            console.log(`Access ${success ? 'granted' : 'denied'} for ${username} (${userType})`);
+        }
+
+        function handleRegister() {
+            const fullName = document.getElementById('regFullName').value;
+            const email = document.getElementById('regEmail').value;
+            const userId = document.getElementById('regUserId').value;
+            const department = document.getElementById('regDepartment').value;
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+            const userType = document.getElementById('regUserType').value;
+            const registerAlert = document.getElementById('registerAlert');
+
+            // Validate all fields
+            if (!fullName || !email || !userId || !department || !password || !confirmPassword || !userType) {
+                showAlert(registerAlert, 'Please fill in all fields!', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showAlert(registerAlert, 'Passwords do not match!', 'error');
+                return;
+            }
+
+            // Check if user already exists
+            const users = JSON.parse(localStorage.getItem('universityUsers') || '[]');
+            if (users.find(u => u.id === userId || u.email === email)) {
+                showAlert(registerAlert, 'User with this ID or email already exists!', 'error');
+                return;
+            }
+
+            // Create new user
+            const newUser = {
+                id: userId,
+                name: fullName,
+                email: email,
+                password: password,
+                type: userType,
+                department: department,
+                status: 'active',
+                registrationDate: new Date().toISOString().split('T')[0],
+                registrationIP: '127.0.0.1'
+            };
+
+            // Save user
+            users.push(newUser);
+            localStorage.setItem('universityUsers', JSON.stringify(users));
+
+            showAlert(registerAlert, '✅ Account created successfully! You can now login.', 'success');
+
+            // Close modal after delay
+            setTimeout(() => {
+                closeRegisterModal();
+            }, 2000);
+        }
+
+        function redirectToDashboard(userType) {
+            switch(userType) {
+                case 'student':
+                    window.location.href = 'student-dashboard.html';
+                    break;
+                case 'examiner':
+                    window.location.href = 'examiner-dashboard.html';
+                    break;
+                case 'admin':
+                    window.location.href = 'admin-dashboard.html';
+                    break;
+                default:
+                    window.location.href = 'index1.html';
+            }
+        }
+
+        function showAlert(container, message, type) {
+            if (container) {
+                container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            }
+        }
+
+        // Logout function for other pages
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

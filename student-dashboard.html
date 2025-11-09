@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Online Examination System</title>
+    <link rel="stylesheet" href="style2.css">
+    <style>
+        /* Additional styles for student dashboard */
+        .dashboard {
+            padding: 30px 0;
+        }
+
+        .dashboard-header {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-header h2 {
+            color: #1a2a6c;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+
+        .dashboard-header p {
+            color: #666;
+            margin: 0;
+        }
+
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .dashboard-card h3 {
+            color: #555;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        .dashboard-card .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #1a2a6c;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-card p {
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .table-container h3 {
+            padding: 20px;
+            color: #1a2a6c;
+            border-bottom: 1px solid #eee;
+            margin: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #555;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .access-denied {
+            text-align: center;
+            padding: 50px 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin: 50px auto;
+            max-width: 500px;
+        }
+
+        .access-denied h2 {
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+
+        .access-denied p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-upcoming {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-ongoing {
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div style="width: 50px; height: 50px; background: white; display: flex; align-items: center; justify-content: center; border-radius: 5px; font-weight: bold; color: #1a2a6c;">
+                    LUCT
+                </div>
+            </div>
+            <div class="title">
+                <h1>Limkokwing University Of Creative Technology</h1>
+                <p>Student Portal - Online Examination System</p>
+            </div>
+            <div class="nav-links">
+                <a href="index1.html">Home</a>
+                <a href="login.html">Login</a>
+                <a href="student-dashboard.html" class="active">Student Portal</a>
+                <a href="examiner-dashboard.html">Examiner Portal</a>
+                <a href="admin-dashboard.html">Administrator</a>
+            </div>
+            <div class="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Student Dashboard -->
+    <section class="dashboard">
+        <div class="container">
+            <!-- Access denied message (hidden by default) -->
+            <div id="accessDenied" class="access-denied" style="display: none;">
+                <h2>🚫 Access Denied</h2>
+                <p>You must be a registered student to access this portal.</p>
+                <p>Please login with valid student credentials or contact administration.</p>
+                <button class="btn btn-primary" onclick="redirectToLogin()">Go to Login</button>
+            </div>
+
+            <!-- Actual dashboard content (hidden by default) -->
+            <div id="dashboardContent">
+                <div class="dashboard-header">
+                    <div>
+                        <h2>Student Dashboard</h2>
+                        <p id="studentWelcome">Welcome, Student</p>
+                        <p id="studentInfo" style="font-size: 0.9rem; color: #666;"></p>
+                    </div>
+                    <button class="btn btn-secondary" onclick="logout()">Logout</button>
+                </div>
+
+                <div class="dashboard-cards">
+                    <div class="dashboard-card">
+                        <h3>Upcoming Exams</h3>
+                        <div class="number" id="upcomingExams">0</div>
+                        <p>Exams scheduled for you</p>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Completed Exams</h3>
+                        <div class="number" id="completedExams">0</div>
+                        <p>Exams you have taken</p>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Average Score</h3>
+                        <div class="number" id="averageScore">0%</div>
+                        <p>Your overall performance</p>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <h3 style="padding: 20px 20px 0;">Available Exams</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Exam Name</th>
+                                <th>Subject</th>
+                                <th>Date & Time</th>
+                                <th>Duration</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="examsTable">
+                            <tr>
+                                <td colspan="6" style="text-align: center;">Loading exams...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-container" style="margin-top: 30px;">
+                    <h3 style="padding: 20px 20px 0;">Exam Results</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Exam Name</th>
+                                <th>Subject</th>
+                                <th>Date Taken</th>
+                                <th>Score</th>
+                                <th>Grade</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTable">
+                            <tr>
+                                <td colspan="6" style="text-align: center;">Loading results...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Limkokwing University</h4>
+                    <p>Innovating education through technology and creativity</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index1.html">Home</a></li>
+                        <li><a href="login.html">Login</a></li>
+                       
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <p>Email: support@limkokwing.edu</p>
+                    <p>Phone: +266 456 7890</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Limkokwing University. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Student Dashboard JavaScript with Enhanced Security
+        let currentUser = null;
+
+        // Initialize student dashboard
+        function initStudentDashboard() {
+            console.log('Initializing student dashboard...');
+            
+            // Check authentication and user type
+            currentUser = checkStudentAuth();
+            
+            if (!currentUser) {
+                console.log('Access denied - User not authenticated as student');
+                showAccessDenied();
+                return;
+            }
+            
+            // User is authenticated as student, show dashboard
+            showDashboardContent();
+            
+            // Update welcome message and user info
+            updateUserInfo();
+            
+            // Load student data
+            loadStudentData();
+            
+            console.log('Student dashboard initialized successfully for:', currentUser.name);
+        }
+
+        // Enhanced authentication check for students only
+        function checkStudentAuth() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            
+            // Check if user is logged in
+            if (!currentUser) {
+                console.log('No user logged in');
+                alert('Please login first!');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1000);
+                return null;
+            }
+            
+            // Check if user is actually a student
+            if (currentUser.type !== 'student') {
+                console.log('Access denied - User is not a student:', currentUser.type);
+                alert('Access Denied! Student portal is for registered students only.');
+                
+                // Log unauthorized access attempt
+                logUnauthorizedAccess(currentUser);
+                
+                setTimeout(() => {
+                    // Redirect to appropriate dashboard based on user type
+                    if (currentUser.type === 'examiner') {
+                        window.location.href = 'examiner-dashboard.html';
+                    } else if (currentUser.type === 'admin') {
+                        window.location.href = 'admin-dashboard.html';
+                    } else {
+                        window.location.href = 'login.html';
+                    }
+                }, 2000);
+                return null;
+            }
+            
+            // Additional verification: Check if user exists in the system
+            const allUsers = JSON.parse(localStorage.getItem('universityUsers') || '[]');
+            const userExists = allUsers.some(user => 
+                user.id === currentUser.id && 
+                user.type === 'student' && 
+                user.status === 'active'
+            );
+            
+            if (!userExists) {
+                console.log('Access denied - Student not found in system');
+                alert('Student account not found or inactive. Please contact administration.');
+                localStorage.removeItem('currentUser');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+                return null;
+            }
+            
+            return currentUser;
+        }
+
+        // Log unauthorized access attempts
+        function logUnauthorizedAccess(user) {
+            const securityLogs = JSON.parse(localStorage.getItem('securityLogs') || '[]');
+            const logEntry = {
+                userId: user.id,
+                userName: user.name,
+                userType: user.type,
+                attemptedAccess: 'student-dashboard',
+                timestamp: new Date().toISOString(),
+                action: 'ACCESS_DENIED'
+            };
+            
+            securityLogs.push(logEntry);
+            
+            // Keep only last 50 security logs
+            if (securityLogs.length > 50) {
+                securityLogs.splice(0, securityLogs.length - 50);
+            }
+            
+            localStorage.setItem('securityLogs', JSON.stringify(securityLogs));
+            console.log('Security log updated: Unauthorized access attempt');
+        }
+
+        function showAccessDenied() {
+            document.getElementById('accessDenied').style.display = 'block';
+            document.getElementById('dashboardContent').style.display = 'none';
+        }
+
+        function showDashboardContent() {
+            document.getElementById('accessDenied').style.display = 'none';
+            document.getElementById('dashboardContent').style.display = 'block';
+        }
+
+        function updateUserInfo() {
+            document.getElementById('studentWelcome').textContent = `Welcome, ${currentUser.name}`;
+            document.getElementById('studentInfo').textContent = 
+                `ID: ${currentUser.id} | Department: ${currentUser.department}`;
+        }
+
+        function loadStudentData() {
+            // Load exam data
+            loadExamsData();
+            
+            // Load results data
+            loadResultsData();
+            
+            // Update dashboard statistics
+            updateDashboardStats();
+        }
+
+        function loadExamsData() {
+            const examsTable = document.getElementById('examsTable');
+            
+            // Sample exam data - In real system, this would come from server/database
+            const sampleExams = [
+                {
+                    name: "Mathematics Final Exam",
+                    subject: "Mathematics",
+                    date: "2025-03-15 10:00 AM",
+                    duration: "2 hours",
+                    status: "upcoming"
+                },
+                {
+                    name: "Computer Science Midterm",
+                    subject: "Computer Science",
+                    date: "2025-03-20 02:00 PM",
+                    duration: "1.5 hours",
+                    status: "upcoming"
+                }
+            ];
+            
+            if (sampleExams.length === 0) {
+                examsTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">No exams available at the moment</td></tr>';
+                return;
+            }
+            
+            examsTable.innerHTML = '';
+            sampleExams.forEach(exam => {
+                const row = document.createElement('tr');
+                const statusClass = `status-${exam.status}`;
+                const statusText = exam.status.charAt(0).toUpperCase() + exam.status.slice(1);
+                
+                row.innerHTML = `
+                    <td>${exam.name}</td>
+                    <td>${exam.subject}</td>
+                    <td>${exam.date}</td>
+                    <td>${exam.duration}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>
+                        <button class="btn btn-primary" onclick="startExam('${exam.name}')">Start Exam</button>
+                    </td>
+                `;
+                examsTable.appendChild(row);
+            });
+        }
+
+        function loadResultsData() {
+            const resultsTable = document.getElementById('resultsTable');
+            
+            // Sample results data
+            const sampleResults = [
+                {
+                    name: "Physics Quiz",
+                    subject: "Physics",
+                    dateTaken: "2025-02-10",
+                    score: "85%",
+                    grade: "A"
+                },
+                {
+                    name: "Chemistry Test",
+                    subject: "Chemistry",
+                    dateTaken: "2025-02-05",
+                    score: "78%",
+                    grade: "B+"
+                }
+            ];
+            
+            if (sampleResults.length === 0) {
+                resultsTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">No exam results available</td></tr>';
+                return;
+            }
+            
+            resultsTable.innerHTML = '';
+            sampleResults.forEach(result => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${result.name}</td>
+                    <td>${result.subject}</td>
+                    <td>${result.dateTaken}</td>
+                    <td><strong>${result.score}</strong></td>
+                    <td><span style="font-weight: bold; color: #27ae60;">${result.grade}</span></td>
+                    <td>
+                        <button class="btn btn-outline" onclick="viewResultDetails('${result.name}')">View Details</button>
+                    </td>
+                `;
+                resultsTable.appendChild(row);
+            });
+        }
+
+        function updateDashboardStats() {
+            // Update statistics based on loaded data
+            document.getElementById('upcomingExams').textContent = '2';
+            document.getElementById('completedExams').textContent = '2';
+            document.getElementById('averageScore').textContent = '82%';
+        }
+
+        function startExam(examName) {
+            if (confirm(`Are you ready to start "${examName}"? You will have limited time to complete.`)) {
+                alert(`Starting exam: ${examName}\n\nThis would redirect to the exam interface in a real system.`);
+                // In real system: window.location.href = `exam.html?name=${encodeURIComponent(examName)}`;
+            }
+        }
+
+        function viewResultDetails(examName) {
+            alert(`Viewing detailed results for: ${examName}\n\nThis would show detailed performance analytics.`);
+        }
+
+        function redirectToLogin() {
+            window.location.href = 'login.html';
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                // Log logout event
+                const securityLogs = JSON.parse(localStorage.getItem('securityLogs') || '[]');
+                securityLogs.push({
+                    userId: currentUser.id,
+                    userName: currentUser.name,
+                    action: 'LOGOUT',
+                    timestamp: new Date().toISOString()
+                });
+                localStorage.setItem('securityLogs', JSON.stringify(securityLogs));
+                
+                localStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Initialize student dashboard when page loads
+        document.addEventListener('DOMContentLoaded', initStudentDashboard);
+    </script>
+</body>
+</html>
